@@ -1,0 +1,236 @@
+---
+title: "Predicting Inflation Using VAR Autoregressions"
+subtitle: "Irene Berezin, Honours Economics"
+format:
+  revealjs: 
+    theme: serif
+    smaller: true
+css: styles.css
+---
+
+## Data Overview
+
+- Sources: Statistics Canada, Bank of Canada, St. Louis Federal Reserve Bank, Teranet-National Bank, USITC Tariff Database, Economic Policy Uncertainty Index webpage.
+- Period: Monthly
+- Data Categories:
++ Price Indices: Total CPI, Total CPI (services only), Total CPI (goods only)
++ Inflation Expectations: break-even inflation rate
++ Goods-based inflation measures: GDP, Fisher Commodities Price Index, Supply Chain Pressure Index
++ Services-based inflation measures: Unemployment Rate, LFS-Micro, Canadian Housing Price Index
++ Tarrifs and external pressures: effective tarrif rate, US-Canada exchange rate, US-Canada trade uncertainty index 
+
+
+## Data Summary
+
+<table style="width: 100%; font-size: 15.5px;">
+  <thead>
+    <tr>
+      <th rowspan="2" style="text-align: left;">Variable</th>
+      <th rowspan="2">Stationarity*</th>
+      <th rowspan="2">Parsimonious Model (Unemployment)</th>
+      <th rowspan="2">Parsimonious Model (GDP)</th>
+      <th colspan="2">Deconstructed Model</th>
+    </tr>
+    <tr>
+      <th>Services-only Inflation Model</th>
+      <th>Goods-only Inflation Model</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left;">Total CPI YoY% Change</td>
+      <td>Stationary</td>
+      <td>✔️</td>
+      <td>✔️</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">Goods-Only CPI YoY% Change</td>
+      <td>Stationary</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>✔️</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">Services-Only CPI YoY% Change</td>
+      <td>Non-Stationary</td>
+      <td>...</td>
+      <td>...</td>
+      <td>✔️</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">Gross Domestic Product</td>
+      <td>Non-Stationary</td>
+      <td>...</td>
+      <td>✔️</td>
+      <td>...</td>
+      <td>✔️</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">Unemployment Rate</td>
+      <td>Stationary</td>
+      <td>✔️</td>
+      <td>...</td>
+      <td>✔️</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">Break-Even Inflation Rate</td>
+      <td>Stationary</td>
+      <td>✔️</td>
+      <td>✔️</td>
+      <td>✔️</td>
+      <td>✔️</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">Fisher Commodities Price Index</td>
+      <td>Non-Stationary</td>
+      <td>✔️</td>
+      <td>✔️</td>
+      <td>✔️</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">LFS-Micro</td>
+      <td>Non-Stationary</td>
+      <td>✔️</td>
+      <td>✔️</td>
+      <td>✔️</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">Effective Tarrif Rate</td>
+      <td>Non-Stationary</td>
+      <td>✔️</td>
+      <td>✔️</td>
+      <td>...</td>
+      <td>✔️</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">US-Canada Exchange Rate</td>
+      <td>Stationary</td>
+      <td>✔️</td>
+      <td>✔️</td>
+      <td>...</td>
+      <td>✔️</td>
+    </tr>
+     <tr>
+      <td style="text-align: left;">C11 Canadian Housing Price Index</td>
+      <td>Non-Stationary</td>
+      <td>...</td>
+      <td>...</td>
+      <td>✔️</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;">Supply Chain Pressure Index</td>
+      <td>Non-Stationary</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>✔️</td>
+    </tr>
+    </tbody>
+</table>
+
+
+*\*Note: Stationarity is determined by the Augmented Dickey-Fuller test at a thresold of 0.1. All non-stataionary variables are converted to a stationary form by taking the log-log difference, with the exception of Services-Only YoY% CPI.*
+
+## Parsimonious Model: Specifications
+
+
+::: {.columns}
+
+::: {.column width="50%"}
+**Predicted variable: Total CPI YoY% Change**
+
+- Total CPI YoY% Change was chosen due to it's stationary properties. 
+- More prone to instability due to external shocks (eg; oil prices), unlike CPI-Trim
+- Given the current economic and political instability in the United States, this might be a good thing. 
+
+:::
+
+::: {.column width="50%"}
+**Number of Lags:**
+
+- AIC criterion suggested 23 lags, however a 12-lag model was chosen to encapsulate the fact that macroeconomic policies and events can take around a year to affect the economy. 
+- While more lags could be used, there was a risk of overfitting the model.
+
+:::
+
+:::
+
+![Image caption here](cpi_plot_covid.png){width="100%"}
+
+
+## Parsimonious Model: Specifications
+
+::: {.columns}
+
+::: {.column width="50%"}
+- Unemployment rate and GDP change highly collinear: phillips curve
+- **Break-even inflation rate:**
+    + Bank of Canada estimates that 65% of consumers are backwards-looking while 35% of consumers are forwards-looking[^1]. 
+    + Take difference in monthly conventional bond yields (CBY) and monthly real return bond yields (RBY) to measure consumer expectations.
+    + RBY is inflation-protected, CBY is not. Difference gives us the *expected inflation rate*.
+
+- Supply-side inflationary pressures: 
+    + LFS-micro: measure of canadian wage growth
+    + BCPI: measure of underlying price of raw materials
+:::
+
+::: {.column width="50%"}
+![](gdp_v_unemp_covid.png){width="100%"}
+
+![](break_even.png){width="100%"}
+:::
+
+:::
+
+## Parsimonious Model: Measuring Tarrif Pressures
+
+- In 2022, exports to the United States accounted for 17.8% of Canada's GDP and supported over 2.4 million jobs in Canada.
+- Need a method of measuring the effect of Trump's tarrifs on the economy. 
+    + **Exchange rate**: greater tarrifs &rarr; depreciation of canadian dollar &rarr; inflation, slower GDP growth.
+- Issue: Exchange rate measures broad-based, currency-driven inflation
+    + **Effective tarrif rate**: US Import charges / US customs value
+    + Better measure of direct supply-side shocks 
+
+![](tarrif_rate.png){width="100%"}
+
+## Parsimonious Models: Inflation Prediction Results
+
+::: {.columns}
+
+::: {.column width="50%"}
+Both the GDP-based parsimonious model and the Unemployment Rate-based model predict roughly equivalent trends in YoY %-change CPI. 
+
+- The inflation rate is expected to appreciate slowly over the course of 2025 and into 2026, going from 1.75% in July of 2025 to 3% in 2026. 
+
+- The nature of a VAR-based model is high confidence intervals in predictions, so the results of the parsimonious models may be undershooting or overshooting the true inflation rate.
+:::
+
+::: {.column width="50%"}
+![](cpi_parsimonious_gdp.png){width="100%"}
+:::
+
+:::
+
+![](cpi_forecast_unemp.png){width="100%"}
+
+
+## Structural VARs: Measuring Potentional Effects of Trump's Tarrifs 
+
+Given the uncertainty surrounding US politics and the US-Canadian trade war, it's important we forecast the potential shocks to inflation if the trade war were to escalate. 
+
+- We apply a **Structural Vector Autoregressive Model:** we make assumptions about how the economy works contemporaneously, and apply those assumptions to our model. 
+  + Done via Cholesky ordering: order variables from slowest-moving to fastest-moving.
+  + change in tarrif rate &rarr; 
+## 
+
+
+
+
