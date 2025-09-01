@@ -9,7 +9,7 @@
 <link href="presentation_files/libs/quarto-html/quarto-syntax-highlighting-48ffa3e5b9d089919c6712c39e5b00f2.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.6.41">
 
-  <title>Predicting Inflation Using VAR Autoregressions</title>
+  <title>Predicting Inflation Using Vector Autoregessions</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -127,7 +127,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Predicting Inflation Using VAR Autoregressions</h1>
+  <h1 class="title">Predicting Inflation Using Vector Autoregessions</h1>
   <p class="subtitle">Irene Berezin, Honours Economics</p>
 
 <div class="quarto-title-authors">
@@ -137,8 +137,8 @@
 <section id="data-overview" class="slide level2">
 <h2>Data Overview</h2>
 <ul>
-<li>Sources: Statistics Canada, Bank of Canada, St.&nbsp;Louis Federal Reserve Bank, Teranet-National Bank, USITC Tariff Database, Economic Policy Uncertainty Index webpage.</li>
-<li>Period: Monthly</li>
+<li>Sources: Statistics Canada, Bank of Canada, St.&nbsp;Louis Federal Reserve Bank, Teranet-National Bank, USITC Tariff Database</li>
+<li>Period: Monthly, starting from 2000</li>
 <li>Data Categories:</li>
 <li>Price Indices: Total CPI, Total CPI (services only), Total CPI (goods only)</li>
 <li>Inflation Expectations: break-even inflation rate</li>
@@ -426,14 +426,14 @@ Non-Stationary
 <h2>Parsimonious Model: Specifications</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<p><strong>Predicted variable: Total CPI YoY% Change</strong></p>
+<p><strong>Predicted variable: Total CPI YoY% change</strong></p>
 <ul>
 <li>Total CPI YoY% Change was chosen due to it’s stationary properties.</li>
 <li>More prone to instability due to external shocks (eg; oil prices), unlike CPI-Trim</li>
 <li>Given the current economic and political instability in the United States, this might be a good thing.</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<p><strong>Number of Lags:</strong></p>
+<p><strong>Number of lags:</strong></p>
 <ul>
 <li>AIC criterion suggested 23 lags, however a 12-lag model was chosen to encapsulate the fact that macroeconomic policies and events can take around a year to affect the economy.</li>
 <li>While more lags could be used, there was a risk of overfitting the model.</li>
@@ -444,12 +444,12 @@ Non-Stationary
 <section id="parsimonious-model-specifications-1" class="slide level2">
 <h2>Parsimonious Model: Specifications</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
+<div class="column" style="width:40%;">
 <ul>
 <li>Unemployment rate and GDP change highly collinear: phillips curve</li>
 <li><strong>Break-even inflation rate:</strong>
 <ul>
-<li>Bank of Canada estimates that 65% of consumers are backwards-looking while 35% of consumers are forwards-looking[^1].</li>
+<li>Bank of Canada estimates that 65% of consumers are backwards-looking while 35% of consumers are forwards-looking.</li>
 <li>Take difference in monthly conventional bond yields (CBY) and monthly real return bond yields (RBY) to measure consumer expectations.</li>
 <li>RBY is inflation-protected, CBY is not. Difference gives us the <em>expected inflation rate</em>.</li>
 </ul></li>
@@ -459,7 +459,7 @@ Non-Stationary
 <li>BCPI: measure of underlying price of raw materials</li>
 </ul></li>
 </ul>
-</div><div class="column" style="width:50%;">
+</div><div class="column" style="width:60%;">
 <p><img data-src="gdp_v_unemp_covid.png" style="width:100.0%"></p>
 <p><img data-src="break_even.png" style="width:100.0%"></p>
 </div></div>
@@ -496,9 +496,312 @@ Non-Stationary
 </section>
 <section id="structural-vars-measuring-potentional-effects-of-trumps-tarrifs" class="slide level2">
 <h2>Structural VARs: Measuring Potentional Effects of Trump’s Tarrifs</h2>
+<p>Given the uncertainty surrounding US politics and the US-Canadian trade war, it’s important we forecast the potential shocks to inflation if the trade war were to escalate.</p>
+<ul>
+<li>We apply a <strong>Structural Vector Autoregressive Model:</strong> we make assumptions about how the economy works contemporaneously, and apply those assumptions to our model.
+<ul>
+<li>Done VIA Cholesky ordering: order variables from slowest-moving to fastest-moving.</li>
+</ul></li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Order</th>
+<th style="text-align: left;">Variables</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>1. Exogenous Policy Shock</strong></td>
+<td style="text-align: left;">Change in Tarrif Rate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2. Slow-Moving Real Variables</strong></td>
+<td style="text-align: left;">GDP, Unemployment, LFS Micro</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>3. Faster-Moving Price Variables</strong></td>
+<td style="text-align: left;">CPI, FCPI</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>4. Very Fast-Moving Financials</strong></td>
+<td style="text-align: left;">Exchange rate, Break-Even inflation rate</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:50%;">
+<p><img data-src="irfs_parsimonious.png" style="width:100.0%"></p>
+</div></div>
 </section>
-<section id="section" class="slide level2">
-<h2></h2>
+<section id="deconstructed-model-model-specifications" class="slide level2">
+<h2>Deconstructed Model: Model Specifications</h2>
+<ul>
+<li>Different variables affect different parts of CPI in different ways and to different extents.</li>
+<li>We can’t add too many variables to our model in fear of multicollinearity and overfitting.
+<ul>
+<li>Take GDP growth and the unemployment rate, for instance. Can’t include both!</li>
+</ul></li>
+<li>We can instead <strong>deconstruct CPI into multiple variables, and apply different VAR specifications for each one.</strong> Then, we can reassemble the predictions to get a (more accurate) estimate of future inflation.
+<ul>
+<li>Hedge Funds do this for hundreds of CPI baskets, but we only focus on two: <strong>Services-based CPI</strong> and <strong>Goods-based CPI</strong>.</li>
+</ul></li>
+</ul>
+<br>
+<table style="width: 100%; font-size: 14px; margin-top: 20px;">
+<thead>
+<tr>
+<th>
+</th>
+<th>
+Total CPI YoY% Change
+</th>
+<th>
+Goods-Only CPI YoY% Change
+</th>
+<th>
+Services-Only CPI YoY% Change
+</th>
+<th>
+Gross Domestic Product
+</th>
+<th>
+Unemployment Rate
+</th>
+<th>
+Break-Even Inflation Rate
+</th>
+<th>
+Fisher Commodities Price Index
+</th>
+<th>
+LFS-Micro
+</th>
+<th>
+Effective Tarrif Rate
+</th>
+<th>
+US-Canada Exchange Rate
+</th>
+<th>
+C11 Canadian Housing Price Index
+</th>
+<th>
+Supply Chain Pressure Index
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Stationarity
+</td>
+<td>
+Stationary
+</td>
+<td>
+Stationary
+</td>
+<td>
+Non-Stationary
+</td>
+<td>
+Non-Stationary
+</td>
+<td>
+Stationary
+</td>
+<td>
+Stationary
+</td>
+<td>
+Non-Stationary
+</td>
+<td>
+Non-Stationary
+</td>
+<td>
+Non-Stationary
+</td>
+<td>
+Stationary
+</td>
+<td>
+Non-Stationary
+</td>
+<td>
+Non-Stationary
+</td>
+</tr>
+<tr>
+<td>
+Services-only Inflation Model
+</td>
+<td>
+…
+</td>
+<td>
+…
+</td>
+<td>
+✔️
+</td>
+<td>
+…
+</td>
+<td>
+✔️
+</td>
+<td>
+✔️
+</td>
+<td>
+…
+</td>
+<td>
+✔️
+</td>
+<td>
+…
+</td>
+<td>
+…
+</td>
+<td>
+✔️
+</td>
+<td>
+…
+</td>
+</tr>
+<tr>
+<td>
+Goods-only Inflation Model
+</td>
+<td>
+…
+</td>
+<td>
+✔️
+</td>
+<td>
+…
+</td>
+<td>
+✔️
+</td>
+<td>
+…
+</td>
+<td>
+✔️
+</td>
+<td>
+✔️
+</td>
+<td>
+…
+</td>
+<td>
+✔️
+</td>
+<td>
+✔️
+</td>
+<td>
+…
+</td>
+<td>
+✔️
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deconstructed-var-model-specifications-new-variables" class="slide level2">
+<h2>Deconstructed VAR: Model specifications, New Variables</h2>
+<h3 id="goods-based-cpi-change-var">Goods-Based CPI-change VAR</h3>
+<p>Predicted variable is the goods-only portion of CPI-Total.</p>
+<ul>
+<li><p><strong>Change in GDP</strong>: Strong increases in GDP typically signal robust consumer spending and high demand for goods</p></li>
+<li><p><strong>Break-Even Inflation Rate</strong>: Inflation expectations</p></li>
+<li><p><strong>Tarrif Rate, Exchange rate</strong>: a higher tariff rate and a weaker Canadian dollar directly increase the cost of imported goods.</p></li>
+<li><p><strong>FCPI</strong>: Captures changes in the prices of raw materials which have a direct downstream effect on the price of consumer goods.</p></li>
+<li><p><strong>Supply Chain Pressure Index</strong>: Measure of distruptions in the global production and transportation of goods (shortages, bottlenecks).</p></li>
+</ul>
+<h3 id="services-based-cpi-change-var">Services-Based CPI-change VAR</h3>
+<p>Predicted variable is the services-only portion of CPI-Total.</p>
+<ul>
+<li><p><strong>Unemployment rate</strong>: Measure of labor market slack.</p></li>
+<li><p><strong>Break-Even Inflation Rate</strong>: Inflation expectations</p></li>
+<li><p><strong>LFS-Micro</strong>: stable signal of labor cost pressures</p></li>
+<li><p><strong>C11 Housing market price index</strong>: Housing prices are an imcreasingly significant component of the Canadian economy. Housing is considered a service by the BOC.</p></li>
+</ul>
+</section>
+<section id="goods-based-var-results-impulse-response-functions" class="slide level2">
+<h2>Goods-based VAR: Results, Impulse Response Functions</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Log-% change in GDP is expected to appreciate considerably over the course of the next year and a half, reaching 2.60% in mid-2026.</li>
+<li>Tarrif shocks appear to have no long-term affects on GDP growth, however there is a temporary, statistically significant inflationary shock to %-change Goods CPI in the medium term, peaking at 2.1% 10 months out.</li>
+</ul>
+<p><img data-src="goods_inflation_forecast.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="irf_plot_goods.png"></p>
+</div></div>
+</section>
+<section id="supply-based-var-results-impulse-response-functions" class="slide level2">
+<h2>Supply-based VAR: Results, Impulse Response Functions</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>The services-based inflation rate is predicted to depreciate considerably over the course of the next year and a half, falling from 3.0% in June 2025 to 2.2% in mid-2026.</li>
+<li>Tarrif shocks have a statistically insignificant effect on the services-based inflation rate.</li>
+</ul>
+<p><img data-src="services_inflation_forecast_2.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="irf_plot_services.png"></p>
+</div></div>
+</section>
+<section id="housing-is-a-key-driver-of-changes-in-supply-based-cpi" class="slide level2">
+<h2>Housing is a Key Driver of Changes in Supply-based CPI</h2>
+<p>Another interesting result with the Goods/Services split is that housing is a statistically significant driver of changes in the Services-Based inflation rate:</p>
+
+<img data-src="housing.png" class="r-stretch"></section>
+<section id="putting-it-all-together-reconstructed-var-model" class="slide level2">
+<h2>Putting it all together: Reconstructed VAR model</h2>
+<p>We can take the resulting predicted values for the goods-based inflation rate and the services-based inflation rate and recombine them using the BOC’s basket weights to form a comprehensive measure of the overall inflation rate.</p>
+
+<img data-src="cpi_reconstructed_forecast.png" class="r-stretch"><p>The results match what we predicted initally with our parsimonious model, slowly rising over the next year and a half, peaking in mid-2026 at 3.25 percent.</p>
+</section>
+<section id="review-and-policy-reccomendations" class="slide level2">
+<h2>Review and Policy Reccomendations</h2>
+<ul>
+<li><p>The inflation rate is expected to slowly appreciate over the course of the next 18 months reaching between 3% to 3.25% in early 2027.</p></li>
+<li><p>The services sector has been very resilient to tariff threats, but consumers should expect significant increases in the price of goods should the trade war continue.</p></li>
+<li><p>Housing prices have been a key driver of depreciation in the services-based inflation rate. Hence, consumers should could expect inflation to vary significantly depending on the housing market in their specific region.</p></li>
+<li><p>For consumers, expect strong appreciation in the rate of goods-based inflation, and strong depreciation in the rate of services-based inflation.</p></li>
+<li><p>Maintain the current policy rate until 2025 Q3.</p></li>
+<li><p>If the trade war continues and the United States raises/maintains tariffs on Canadian exports, <strong>raise the policy rate by 50 to 150 bp</strong> depending on the tariff level.</p></li>
+<li><p>If tariffs are weakened, maintain the current policy rate, or consider a decrease of approx. 50 bp to the policy rate.</p></li>
+</ul>
+</section>
+<section id="limitations" class="slide level2">
+<h2>Limitations</h2>
+<ul>
+<li><p>Our tariff analysis only accounts for direct tariffs onto Canadian goods and do not account for retalitory tariffs on the United States. Retalitory tariffs would result in a decrease in imported American goods and less competition for Canadian manufacturers, hence resulting in a higher inflation rates.</p></li>
+<li><p><strong>Services-based CPI is non-stationary</strong> (albeit, close to being stationary). May result in innacurate model results.</p></li>
+<li><p>High confidence intervals across the board, exact future inflation remains unclear.</p></li>
+</ul>
+</section>
+<section id="sources" class="slide level2">
+<h2>Sources</h2>
 
 </section>
     </div>
