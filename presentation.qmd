@@ -179,7 +179,7 @@ css: styles.css
 
 - Supply-side inflationary pressures: 
     + LFS-micro: measure of canadian wage growth
-    + BCPI: measure of underlying price of raw materials
+    + FCPI: measure of underlying price of raw materials
 :::
 
 ::: {.column width="60%"}
@@ -373,7 +373,7 @@ Predicted variable is the services-only portion of CPI-Total.
 
 :::
 
-## Supply-based VAR: Results, Impulse Response Functions
+## Services-based VAR: Results, Impulse Response Functions
 
 
 ::: {.columns}
@@ -393,7 +393,7 @@ Predicted variable is the services-only portion of CPI-Total.
 
 :::
 
-## Housing is a Key Driver of Changes in Supply-based CPI
+## Housing is a Key Driver of Changes in Services-based CPI
 
 Another interesting result with the Goods/Services split is that housing is a statistically significant driver of changes in the Services-Based inflation rate:
 
